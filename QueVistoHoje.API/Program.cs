@@ -6,6 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,21 +52,25 @@ builder.Services.AddSwaggerGen(c => {
 });
 
 // Add services to the container
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => {
+        options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+        options.JsonSerializerOptions.WriteIndented = true; // Optional: For better readability
+    }); 
 
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+
+//builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 
 // Database connection string configuration
 var connection = builder.Configuration.GetConnectionString("DefaultConnection")
                  ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(connection));
-
-// Identity Configuration (ensure you have Identity services set up correctly)
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(connection)
+                                                        .EnableSensitiveDataLogging());
 
 builder.Services.AddAuthorization();
+// Identity Configuration (ensure you have Identity services set up correctly)
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<AppDbContext>();;
 
 // Add API endpoints and Identity routes
 builder.Services.AddEndpointsApiExplorer();
@@ -85,9 +91,6 @@ if (app.Environment.IsDevelopment()) {
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-
-// Map Identity endpoints
-app.MapGroup("/identity").MapIdentityApi<ApplicationUser>();
 
 app.MapControllers();
 

@@ -6,7 +6,6 @@ namespace QueVistoHoje.API.Data {
         public string? NIF { get; set; }
         public string? Morada { get; set; }
         public string? Imagem { get; set; }
-
     }
 
 }

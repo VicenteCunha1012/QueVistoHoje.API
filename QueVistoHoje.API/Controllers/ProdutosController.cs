@@ -15,11 +15,43 @@ namespace QueVistoHoje.API.Controllers {
             _produtoRepository = produtoRepository;
         }
 
+        // GET /produtos
+        [HttpGet]
+        public async Task<IActionResult> GetTodosProdutos() {
+            try {
+                var produtos = await _produtoRepository.GetTodosProdutosAsync();
+
+                if (produtos == null || !produtos.Any()) {
+                    return NotFound(new { Message = "Nenhum produto encontrado." });
+                }
+
+                return Ok(produtos);
+            } catch (Exception ex) {
+                return StatusCode(500, new { Message = "Erro ao pesquisar todos os produtos.", Detalhes = ex.Message });
+            }
+        }
+
+        //// GET /produtos/{id}
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GeteProdutoById(int id) {
+            try {
+                var produto = await _produtoRepository.GeteProdutoByIdAsync(id);
+
+                if (produto == null) {
+                    return NotFound(new { Message = "Produto não encontrado." });
+                }
+
+                return Ok(produto);
+            } catch (Exception ex) {
+                return StatusCode(500, new { Message = "Erro ao pesquisar detalhes do produto.", Detalhes = ex.Message });
+            }
+        }
+
         // GET /produtos/categoria/{categoriaId}
         [HttpGet("categoria/{categoriaId}")]
         public async Task<IActionResult> GetProdutosPorCategoria(int categoriaId) {
             try {
-                var produtos = await _produtoRepository.ObterProdutosPorCategoriaAsync(categoriaId);
+                var produtos = await _produtoRepository.GetProdutosByCategoryAsync(categoriaId);
 
                 if (produtos == null || !produtos.Any()) {
                     return NotFound(new { Message = "Nenhum produto encontrado para a categoria especificada." });
@@ -31,7 +63,7 @@ namespace QueVistoHoje.API.Controllers {
             }
         }
 
-        //// GET /produtos/promocoes
+        ////// GET /produtos/promocoes
         //[HttpGet("promocoes")]
         //public async Task<IActionResult> GetProdutosPromocao() {
         //    try {
@@ -61,38 +93,7 @@ namespace QueVistoHoje.API.Controllers {
         //    } catch (Exception ex) {
         //        return StatusCode(500, new { Message = "Erro ao pesquisar produtos mais vendidos.", Detalhes = ex.Message });
         //    }
-        //}
+        //
 
-        //// GET /produtos/{id}
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetDetalheProduto(int id) {
-        //    try {
-        //        var produto = await _produtoRepository.ObterDetalheProdutoAsync(id);
-
-        //        if (produto == null) {
-        //            return NotFound(new { Message = "Produto não encontrado." });
-        //        }
-
-        //        return Ok(produto);
-        //    } catch (Exception ex) {
-        //        return StatusCode(500, new { Message = "Erro ao pesquisar detalhes do produto.", Detalhes = ex.Message });
-        //    }
-        //}
-
-        //// GET /produtos
-        //[HttpGet]
-        //public async Task<IActionResult> GetTodosProdutos() {
-        //    try {
-        //        var produtos = await _produtoRepository.ObterTodosProdutosAsync();
-
-        //        if (produtos == null || !produtos.Any()) {
-        //            return NotFound(new { Message = "Nenhum produto encontrado." });
-        //        }
-
-        //        return Ok(produtos);
-        //    } catch (Exception ex) {
-        //        return StatusCode(500, new { Message = "Erro ao pesquisar todos os produtos.", Detalhes = ex.Message });
-        //    }
-        //}
     }
 }

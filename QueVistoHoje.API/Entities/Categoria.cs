@@ -17,8 +17,7 @@ namespace QueVistoHoje.API.Entities
         public List<Categoria> Subcategorias { get; set; }
         public List<Produto> Produtos { get; set; } = new(); // Inicializamos para evitar null reference
 
-        public Categoria()
-        {
+        public Categoria() {
             Subcategorias = new List<Categoria>();
         }
     }
