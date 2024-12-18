@@ -11,5 +11,11 @@ namespace QueVistoHoje.API.Repositories.Encomendas {
             return await context.Encomendas.ToListAsync();
         }
 
+        //public async Task<List<Encomenda>> GetClientEncomendasAsync(int id) {
+        //    return await context.Encomendas
+        //        .Where(p => p.Cliente.Id == id)
+        //        .ToListAsync();
+        //}
+
     }
 }

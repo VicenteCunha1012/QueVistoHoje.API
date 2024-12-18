@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QueVistoHoje.API.Repositories.Produtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace QueVistoHoje.API.Controllers {
     [ApiController]
@@ -161,7 +157,7 @@ namespace QueVistoHoje.API.Controllers {
         [HttpGet("search")]
         public async Task<IActionResult> SearchProdutos([FromQuery] string query) {
             try {
-                var produtos = await IRepository.GetProdutosByStringAsync(query);
+                var produtos = await IRepository.GetProdutosByStringAsync(query.Trim());
 
                 if (produtos == null || !produtos.Any()) {
                     return NotFound(new { Message = $"Nenhum produto encontrado que corresponda ao termo '{query}'." });
@@ -170,6 +166,21 @@ namespace QueVistoHoje.API.Controllers {
                 return Ok(produtos);
             } catch (Exception ex) {
                 return StatusCode(500, new { Message = "Erro ao pesquisar produtos pelo termo fornecido.", Detalhes = ex.Message });
+            }
+        }
+
+        [HttpGet("inStock")]
+        public async Task<IActionResult> GetProdutosInstock() {
+            try {
+                var produtos = await IRepository.GetProdutosEmStockAsync();
+
+                if (produtos == null || !produtos.Any()) {
+                    return NotFound(new { Message = "Esta empresa não possui stock de nada..." });
+                }
+
+                return Ok(produtos);
+            } catch (Exception ex) {
+                return StatusCode(500, new { Message = "Erro ao pesquisar produtos em stock.", Detalhes = ex.Message });
             }
         }
 

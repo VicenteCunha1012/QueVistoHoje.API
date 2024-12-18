@@ -12,6 +12,7 @@ namespace QueVistoHoje.API.Repositories.Produtos {
         Task<List<Produto>> GetProdutosPrecoMaximoAsync(decimal precoMaximo);
         Task<List<Produto>> GetProdutosPorRangeDePrecoAsync(decimal precoMinimo, decimal precoMaximo);
         Task<List<Produto>> GetProdutosByStringAsync(string searchTerm);
+        Task<List<Produto>> GetProdutosEmStockAsync();
 
     }
 }

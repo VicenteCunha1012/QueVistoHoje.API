@@ -69,13 +69,21 @@ namespace QueVistoHoje.API.Repositories.Produtos {
         public async Task<List<Produto>> GetProdutosByStringAsync(string searchTerm) {
             return await context.Produtos
                 .Include(p => p.Categoria)
+                .Include(p => p.Empresa)
                 .Where(p =>
                     EF.Functions.Like(p.Nome, $"%{searchTerm}%") ||
                     EF.Functions.Like(p.Descricao, $"%{searchTerm}%") ||
-                    p.Categoria.Any(c => EF.Functions.Like(c.Nome, $"%{searchTerm}%"))
+                    p.Categoria.Any(c => EF.Functions.Like(c.Nome, $"%{searchTerm}%")) ||
+                    EF.Functions.Like(p.Empresa.Nome, $"%{searchTerm}%")
                 )
                 .ToListAsync();
         }
 
+        public async Task<List<Produto>> GetProdutosEmStockAsync() {
+            return await context.Produtos
+                      .Include(p => p.Categoria)
+                      .Where(p => p.Stock > 0)
+                      .ToListAsync();
+        }
     }
 }

@@ -23,5 +23,7 @@ namespace QueVistoHoje.API.Controllers {
                 return StatusCode(500, new { Message = "Erro ao pesquisar todos os pagamentos.", Detalhes = ex.Message });
             }
         }
+
+
     }
 }
