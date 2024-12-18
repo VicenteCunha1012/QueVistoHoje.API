@@ -5,18 +5,18 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using QueVistoHoje.API.Repositories.Auth;
 
-using QueVistoHoje.API.Repositories;
-
-namespace QueVistoHoje.API.Controllers {
+namespace QueVistoHoje.API.Controllers
+{
     [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase {
+    [Route("api/auth")]
+    public class AuthenticationController : ControllerBase {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly IConfiguration _configuration;
 
-        public AuthController(UserManager<IdentityUser> userManager,
+        public AuthenticationController(UserManager<IdentityUser> userManager,
                               SignInManager<IdentityUser> signInManager,
                               IConfiguration configuration) {
             _userManager = userManager;

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QueVistoHoje.API.Repositories {
+namespace QueVistoHoje.API.Repositories.Auth {
 
     public class RegisterRepository {
         [Required]

@@ -6,8 +6,13 @@ using QueVistoHoje.API.Entities;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options)
     : IdentityDbContext<ApplicationUser>(options) {
-    public DbSet<Produto> Produtos { get; set; }
-    public DbSet<Categoria> Categorias {  get; set; }
+    public DbSet<Categoria> Categorias { get; set; }    // started
+    public DbSet<Empresa> Empresas { get; set; }        // started
+    public DbSet<Encomenda> Encomendas { get; set; }    // started
+    public DbSet<Pagamento> Pagamentos { get; set; }    // started
+    public DbSet<Produto> Produtos { get; set; }        // done
+    public DbSet<Registo> Registos { get; set; }        // started
+    public DbSet<Transportadora> Transportadoras { get; set; } // started
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder); // Preserves Identity configurations
 

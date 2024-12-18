@@ -1,13 +1,16 @@
 using Microsoft.OpenApi.Models;
 using QueVistoHoje.API.Data;
-using QueVistoHoje.API.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+using QueVistoHoje.API.Repositories.Categorias;
+using QueVistoHoje.API.Repositories.Produtos;
+using QueVistoHoje.API.Repositories.Empresas;
+using QueVistoHoje.API.Repositories.Encomendas;
+using QueVistoHoje.API.Repositories.Pagamentos;
+using QueVistoHoje.API.Repositories.Registos;
+using QueVistoHoje.API.Repositories.Transportadoras;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +30,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Swagger Configuration
 builder.Services.AddSwaggerGen(c => {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Gestao da Loja API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "QueVistoHoje - Cliente", Version = "v1" });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
         Description = "JWT Authorization header using the Bearer scheme",
@@ -55,12 +58,16 @@ builder.Services.AddSwaggerGen(c => {
 builder.Services.AddControllers()
     .AddJsonOptions(options => {
         options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-        options.JsonSerializerOptions.WriteIndented = true; // Optional: For better readability
-    }); 
+        options.JsonSerializerOptions.WriteIndented = true;
+    });
 
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
-
-//builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
+builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
+builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
+builder.Services.AddScoped<IEncomendaRepository, EncomendaRepository>();
+builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
+builder.Services.AddScoped<IRegistoRepository, RegistoRepository>();
+builder.Services.AddScoped<ITransportadoraRepository, TransportadoraRepository>();
 
 // Database connection string configuration
 var connection = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -70,7 +77,7 @@ builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(connec
 
 builder.Services.AddAuthorization();
 // Identity Configuration (ensure you have Identity services set up correctly)
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<AppDbContext>();;
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<AppDbContext>(); ;
 
 // Add API endpoints and Identity routes
 builder.Services.AddEndpointsApiExplorer();
@@ -84,7 +91,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI(c => {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "QueVistoHoje");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "QueVistoHoje - Cliente");
     });
 }
 
