@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace QueVistoHoje.API.Entities {
+namespace QueVistoHoje.API.Data.Entities {
     public class Produto {
         public int Id { get; set; }
         public string Nome { get; set; }
@@ -15,11 +15,11 @@ namespace QueVistoHoje.API.Entities {
         public decimal Preco { get; set; }
         public int Stock { get; set; }
         public string Imagem { get; set; }
-        public bool Promocao { get; set; }
         public string Estado { get; set; }
+        public int EmpresaId { get; set; } // Chave estrangeira
+        public Empresa Empresa { get; set; } // Propriedade de Navegação
 
-        public int EmpresaId { get; set; }
-        public Empresa Empresa { get; set; }
-        public List<Categoria> Categoria { get; set; } = new();
+
+        public List<Categoria> Categoria { get; set; } = new(); // Inicializamos para evitar null reference
     }
 }

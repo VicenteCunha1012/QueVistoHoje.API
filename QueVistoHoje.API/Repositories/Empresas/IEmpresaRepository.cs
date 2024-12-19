@@ -1,4 +1,4 @@
-﻿using QueVistoHoje.API.Entities;
+﻿using QueVistoHoje.API.Data.Entities;
 
 namespace QueVistoHoje.API.Repositories.Empresas {
     public interface IEmpresaRepository {

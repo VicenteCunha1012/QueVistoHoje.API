@@ -1,6 +1,7 @@
-﻿using QueVistoHoje.API.Entities;
+﻿using QueVistoHoje.API.Data.Entities;
 
-namespace QueVistoHoje.API.Repositories.Categorias {
+namespace QueVistoHoje.API.Repositories.Categorias
+{
     public interface ICategoriaRepository {
         Task<List<Categoria>> GetCategoriasAsync();
         Task<Categoria?> GetCategoriaByIdAsync(int id);

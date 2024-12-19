@@ -8,9 +8,8 @@ using QueVistoHoje.API.Repositories.Categorias;
 using QueVistoHoje.API.Repositories.Produtos;
 using QueVistoHoje.API.Repositories.Empresas;
 using QueVistoHoje.API.Repositories.Encomendas;
-using QueVistoHoje.API.Repositories.Pagamentos;
-using QueVistoHoje.API.Repositories.Registos;
-using QueVistoHoje.API.Repositories.Transportadoras;
+using Newtonsoft.Json.Converters;
+using QueVistoHoje.API.Data.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,7 +51,11 @@ builder.Services.AddSwaggerGen(c => {
             new string[] { }
         }
     });
+
+    c.SchemaFilter<EnumSchemaFilter>();
+
 });
+
 
 // Add services to the container
 builder.Services.AddControllers()
@@ -61,13 +64,15 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+        options.SerializerSettings.Converters.Add(new StringEnumConverter())); 
+
+
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 builder.Services.AddScoped<IEncomendaRepository, EncomendaRepository>();
-builder.Services.AddScoped<IPagamentoRepository, PagamentoRepository>();
-builder.Services.AddScoped<IRegistoRepository, RegistoRepository>();
-builder.Services.AddScoped<ITransportadoraRepository, TransportadoraRepository>();
 
 // Database connection string configuration
 var connection = builder.Configuration.GetConnectionString("DefaultConnection")

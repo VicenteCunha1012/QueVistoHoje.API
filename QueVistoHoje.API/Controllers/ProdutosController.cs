@@ -58,21 +58,21 @@ namespace QueVistoHoje.API.Controllers {
             }
         }
 
-        // GET /produtos/promocoes
-        [HttpGet("promocoes")]
-        public async Task<IActionResult> GetProdutosEmPromocao() {
-            try {
-                var produtos = await IRepository.GetProdutosEmPromocao();
+        //// GET /produtos/promocoes
+        //[HttpGet("promocoes")]
+        //public async Task<IActionResult> GetProdutosEmPromocao() {
+        //    try {
+        //        var produtos = await IRepository.GetProdutosEmPromocao();
 
-                if (produtos == null || !produtos.Any()) {
-                    return NotFound(new { message = "Nenhum produto em promoção encontrado." });
-                }
+        //        if (produtos == null || !produtos.Any()) {
+        //            return NotFound(new { message = "Nenhum produto em promoção encontrado." });
+        //        }
 
-                return Ok(produtos);
-            } catch (Exception ex) {
-                return StatusCode(500, new { message = "Erro ao pesquisar produtos em promoção.", Detalhes = ex.Message });
-            }
-        }
+        //        return Ok(produtos);
+        //    } catch (Exception ex) {
+        //        return StatusCode(500, new { message = "Erro ao pesquisar produtos em promoção.", Detalhes = ex.Message });
+        //    }
+        //}
 
         // GET /produtos/top-baratos/{n}
         [HttpGet("top-baratos/{n}")]

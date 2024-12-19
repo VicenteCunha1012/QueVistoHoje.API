@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using QueVistoHoje.API.Entities;
+using QueVistoHoje.API.Data.Entities;
 
-namespace QueVistoHoje.API.Repositories.Categorias {
+namespace QueVistoHoje.API.Repositories.Categorias
+{
     public class CategoriaRepository : ICategoriaRepository {
         private readonly AppDbContext context;
         public CategoriaRepository(AppDbContext context) {

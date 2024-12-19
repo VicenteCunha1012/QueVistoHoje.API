@@ -1,4 +1,4 @@
-﻿using QueVistoHoje.API.Entities;
+﻿using QueVistoHoje.API.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace QueVistoHoje.API.Repositories.Produtos {
@@ -25,11 +25,11 @@ namespace QueVistoHoje.API.Repositories.Produtos {
                 .ToListAsync();
         }
 
-        public async Task<List<Produto>> GetProdutosEmPromocao() {
-            return await context.Produtos
-                .Where(p => p.Promocao == true)
-                .ToListAsync();
-        }
+        //public async Task<List<Produto>> GetProdutosEmPromocao() {
+        //    return await context.Produtos
+        //        .Where(p => p.Promocao == true)
+        //        .ToListAsync();
+        //}
 
         public async Task<List<Produto>> GetTopNProdutosMaisBaratosAsync(int n) {
             return await context.Produtos

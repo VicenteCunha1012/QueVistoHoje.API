@@ -7,8 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using QueVistoHoje.API.Repositories.Auth;
 
-namespace QueVistoHoje.API.Controllers
-{
+namespace QueVistoHoje.API.Controllers {
     [ApiController]
     [Route("api/auth")]
     public class AuthenticationController : ControllerBase {

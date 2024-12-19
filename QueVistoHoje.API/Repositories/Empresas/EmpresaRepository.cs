@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using QueVistoHoje.API.Entities;
+using QueVistoHoje.API.Data.Entities;
 
 namespace QueVistoHoje.API.Repositories.Empresas {
     public class EmpresaRepository : IEmpresaRepository {
