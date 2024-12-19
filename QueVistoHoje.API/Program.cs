@@ -9,7 +9,8 @@ using QueVistoHoje.API.Repositories.Produtos;
 using QueVistoHoje.API.Repositories.Empresas;
 using QueVistoHoje.API.Repositories.Encomendas;
 using Newtonsoft.Json.Converters;
-using QueVistoHoje.API.Data.Entities;
+using Microsoft.AspNetCore.Identity;
+using Newtonsoft.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +58,7 @@ builder.Services.AddSwaggerGen(c => {
 });
 
 
+
 // Add services to the container
 builder.Services.AddControllers()
     .AddJsonOptions(options => {
@@ -64,10 +66,19 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.WriteIndented = true;
     });
 
-builder.Services.AddControllers()
-    .AddNewtonsoftJson(options =>
-        options.SerializerSettings.Converters.Add(new StringEnumConverter())); 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options => {
+        options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        options.SerializerSettings.Converters.Add(new StringEnumConverter());
+
+    });
 
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
@@ -81,14 +92,9 @@ builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlServer(connec
                                                         .EnableSensitiveDataLogging());
 
 builder.Services.AddAuthorization();
-// Identity Configuration (ensure you have Identity services set up correctly)
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>().AddEntityFrameworkStores<AppDbContext>(); ;
 
 // Add API endpoints and Identity routes
 builder.Services.AddEndpointsApiExplorer();
-
-// Add Swagger
-builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 

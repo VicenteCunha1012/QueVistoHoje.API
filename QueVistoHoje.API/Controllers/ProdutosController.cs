@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QueVistoHoje.API.Repositories.Produtos;
 
 namespace QueVistoHoje.API.Controllers {
     [ApiController]
     [Route("api/produtos")]
+    [Authorize]
     public class ProdutosController : ControllerBase {
         private readonly IProdutoRepository IRepository;
         public ProdutosController(IProdutoRepository IRepository) {
@@ -12,6 +14,7 @@ namespace QueVistoHoje.API.Controllers {
 
         // GET /produtos
         [HttpGet]
+
         public async Task<IActionResult> GetProdutos() {
             try {
                 var produtos = await IRepository.GetProdutosAsync();

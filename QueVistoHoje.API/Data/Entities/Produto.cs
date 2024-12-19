@@ -18,8 +18,6 @@ namespace QueVistoHoje.API.Data.Entities {
         public string Estado { get; set; }
         public int EmpresaId { get; set; } // Chave estrangeira
         public Empresa Empresa { get; set; } // Propriedade de Navegação
-
-
         public List<Categoria> Categoria { get; set; } = new(); // Inicializamos para evitar null reference
     }
 }

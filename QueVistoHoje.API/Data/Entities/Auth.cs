@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace QueVistoHoje.API.Repositories.Auth {
-
-    public class RegisterRepository {
+namespace QueVistoHoje.API.Data.Entities {
+    public class Auth {
         [Required]
         [EmailAddress]
         public string Email { get; set; }
