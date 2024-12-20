@@ -1,18 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
 using QueVistoHoje.API.Data.Entities;
 using QueVistoHoje.API.Repositories.Encomendas;
 using Swashbuckle.AspNetCore.Annotations; 
 
 namespace QueVistoHoje.API.Controllers {
-    [ApiController]
+
     [Route("api/encomendas")]
+    [ApiController]
     public class EncomendasController : ControllerBase {
         private readonly IEncomendaRepository IRepository;
         public EncomendasController(IEncomendaRepository IRepository) {
             this.IRepository = IRepository;
         }
+
         // GET /encomendas
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetEncomendas() {
             try {
                 var encomendas = await IRepository.GetEncomendasAsync();
@@ -22,12 +27,13 @@ namespace QueVistoHoje.API.Controllers {
                 }
                 return Ok(encomendas);
             } catch (Exception ex) {
-                return StatusCode(500, new { Message = "Erro ao pesquisar todas as empresas.", Detalhes = ex.Message });
+                return StatusCode(500, new { Message = "Erro ao pesquisar todas as encomendas.", Detalhes = ex.Message });
             }
         }
 
         // GET /api/encomendas/{clientId}
         [HttpGet("cliente/{clientId}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetClientEncomendas(string clientId) {
             try {
                 var encomendas = await IRepository.GetClientEncomendasAsync(clientId);
@@ -47,6 +53,7 @@ namespace QueVistoHoje.API.Controllers {
 
         // GET /api/encomendas/{clientId}/state
         [HttpGet("cliente/{clientId}/state")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetClientEncomendasSpecificState(string clientId, [FromQuery] EncomendaState state) {
             try {
                 var encomendas = await IRepository.GetClientEncomendasSpecificStateAsync(clientId, state);
@@ -66,6 +73,7 @@ namespace QueVistoHoje.API.Controllers {
 
         // POST /api/encomendas/
         [HttpPost("api/encomenda")]
+        [Authorize(Roles="Admin")]
         public async Task<IActionResult> CriarEncomenda([FromBody] Encomenda encomenda) {
             try {
                 if (encomenda == null) {

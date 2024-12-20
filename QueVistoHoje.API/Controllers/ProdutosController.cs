@@ -5,6 +5,7 @@ using QueVistoHoje.API.Repositories.Produtos;
 namespace QueVistoHoje.API.Controllers {
     [ApiController]
     [Route("api/produtos")]
+    [AllowAnonymous]
     public class ProdutosController : ControllerBase {
         private readonly IProdutoRepository IRepository;
         public ProdutosController(IProdutoRepository IRepository) {
@@ -12,7 +13,6 @@ namespace QueVistoHoje.API.Controllers {
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetProdutos() {
             foreach (var header in Request.Headers) {
                 Console.WriteLine($"{header.Key}: {header.Value}");

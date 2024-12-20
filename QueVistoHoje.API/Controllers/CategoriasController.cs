@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QueVistoHoje.API.Repositories.Categorias;
 
 namespace QueVistoHoje.API.Controllers {
-    [ApiController]
     [Route("api/categorias")]
+    [ApiController]
+    [AllowAnonymous]
     public class CategoriasController : ControllerBase {
         private readonly ICategoriaRepository IRepository;
         public CategoriasController(ICategoriaRepository IRepository) {

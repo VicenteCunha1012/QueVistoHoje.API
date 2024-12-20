@@ -10,8 +10,10 @@ using QueVistoHoje.API.Data;
 using System.Security.Cryptography;
 
 namespace QueVistoHoje.API.Controllers {
-    [ApiController]
+
     [Route("api/auth")]
+    [ApiController]
+    [AllowAnonymous]
     public class AuthenticationController : ControllerBase {
         private readonly UserManager<ApplicationUser> userManager;
         private readonly SignInManager<ApplicationUser> signInManager;
@@ -28,7 +30,6 @@ namespace QueVistoHoje.API.Controllers {
         }
 
         [HttpPost("register")]
-        [AllowAnonymous]
         public async Task<IActionResult> Register([FromBody] Auth model) {
             if (!ModelState.IsValid) { return BadRequest(ModelState); }
 
@@ -48,27 +49,50 @@ namespace QueVistoHoje.API.Controllers {
 
         }
 
+        // POST: api/auth/login
         [HttpPost("login")]
-        [AllowAnonymous]
-        public async Task<IActionResult> Login([FromBody] Auth model) {
-            if (!ModelState.IsValid) { return BadRequest(ModelState); }
+        public async Task<IActionResult> Login() {
+            if (!Request.Headers.TryGetValue("Authorization", out var authorizationHeader)) {
+                return Unauthorized(new { Message = "Missing Authorization Header!" });
+            }
 
-            var user = await userManager.FindByEmailAsync(model.Email);
-            if (user == null) return Unauthorized(new { Message = "Credenciais inválidas!" });
+            // Expecting "Basic base64encoded(username:password)"
+            var authHeader = authorizationHeader.ToString();
+            if (!authHeader.StartsWith("Basic ")) {
+                return Unauthorized(new { Message = "Invalid Authorization Header!" });
+            }
 
-            var result = await signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-            if (!result.Succeeded) return Unauthorized(new { Message = "Credenciais inválidas!" });
+            var encodedCredentials = authHeader.Substring("Basic ".Length).Trim();
+            var decodedBytes = Convert.FromBase64String(encodedCredentials);
+            var decodedCredentials = System.Text.Encoding.UTF8.GetString(decodedBytes);
+
+            var separatorIndex = decodedCredentials.IndexOf(":");
+            if (separatorIndex == -1) {
+                return Unauthorized(new { Message = "Invalid Authorization Header format!" });
+            }
+
+            var email = decodedCredentials.Substring(0, separatorIndex);
+            var password = decodedCredentials.Substring(separatorIndex + 1);
+
+            var user = await userManager.FindByEmailAsync(email);
+            if (user == null) {
+                return Unauthorized(new { Message = "Invalid credentials!" });
+            }
+
+            var result = await signInManager.CheckPasswordSignInAsync(user, password, false);
+            if (!result.Succeeded) {
+                return Unauthorized(new { Message = "Invalid credentials!" });
+            }
 
             var token = GenerateJwtToken(user);
 
             var roles = await userManager.GetRolesAsync(user);
-            Console.WriteLine(string.Join(", ", roles));  // Should output "admin"
+            Console.WriteLine(string.Join(", ", roles)); // Should output roles such as "admin"
 
             return Ok(new {
                 Token = token,
                 Expiration = DateTime.UtcNow.AddHours(1)
             });
-
         }
 
         // POST: api/auth/refresh-token

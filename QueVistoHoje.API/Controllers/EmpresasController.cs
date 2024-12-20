@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using QueVistoHoje.API.Repositories.Empresas;
 
 namespace QueVistoHoje.API.Controllers {
-    [ApiController]
     [Route("api/empresas")]
+    [ApiController]
+    [AllowAnonymous]
     public class EmpresasController : ControllerBase {
         private readonly IEmpresaRepository IRepository;
         public EmpresasController(IEmpresaRepository IRepository) {

@@ -54,32 +54,31 @@ builder.Services.AddLogging(logging => {
     logging.SetMinimumLevel(LogLevel.Debug); // Set to debug for verbose logs
 });
 
-// Swagger Configuration
 builder.Services.AddSwaggerGen(c => {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "QueVistoHoje - Cliente", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme {
-        Description = "JWT Authorization header using the Bearer scheme",
+    // Add security definition for Basic Auth
+    c.AddSecurityDefinition("basic", new OpenApiSecurityScheme {
         Type = SecuritySchemeType.Http,
-        Scheme = "bearer"
+        Scheme = "basic",
+        Description = "Input your email and password in the format: `email:password`"
     });
 
+    // Add a requirement to use the security scheme
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
-        {
-            new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            new string[] { }
-        }
-    });
-
-    c.SchemaFilter<EnumSchemaFilter>();
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "basic"
+                    }
+                },
+                new string[] { }
+            }
+        });
 });
 
 // JSON Serialization Configuration
@@ -116,12 +115,6 @@ builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<IEmpresaRepository, EmpresaRepository>();
 builder.Services.AddScoped<IEncomendaRepository, EncomendaRepository>();
-
-// Add Authorization Services
-builder.Services.AddAuthorization(options => {
-    options.AddPolicy("AdminPolicy", policy =>
-        policy.RequireRole("admin"));
-});
 
 // Add API Endpoints and Identity routes
 builder.Services.AddEndpointsApiExplorer();
