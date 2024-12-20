@@ -5,17 +5,19 @@ using QueVistoHoje.API.Repositories.Produtos;
 namespace QueVistoHoje.API.Controllers {
     [ApiController]
     [Route("api/produtos")]
-    [Authorize]
     public class ProdutosController : ControllerBase {
         private readonly IProdutoRepository IRepository;
         public ProdutosController(IProdutoRepository IRepository) {
             this.IRepository = IRepository;
         }
 
-        // GET /produtos
         [HttpGet]
-
+        [Authorize(Roles = "admin")]
         public async Task<IActionResult> GetProdutos() {
+            foreach (var header in Request.Headers) {
+                Console.WriteLine($"{header.Key}: {header.Value}");
+            }
+
             try {
                 var produtos = await IRepository.GetProdutosAsync();
 

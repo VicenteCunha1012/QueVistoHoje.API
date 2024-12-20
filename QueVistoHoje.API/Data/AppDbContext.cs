@@ -13,6 +13,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     protected override void OnModelCreating(ModelBuilder modelBuilder) {
         base.OnModelCreating(modelBuilder);
 
+        // Set precision and scale for 'Preco' property
+        modelBuilder.Entity<Produto>()
+            .Property(p => p.Preco)
+            .HasColumnType("decimal(18,2)");  // Precision 18, Scale 2
+
         modelBuilder.Entity<Produto>()
             .HasMany(p => p.Categoria)
             .WithMany(c => c.Produtos)

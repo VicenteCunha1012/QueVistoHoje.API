@@ -43,6 +43,7 @@ namespace QueVistoHoje.API.Controllers {
                 return BadRequest(result.Errors);
             }
 
+            await userManager.AddToRoleAsync(user, "admin");
             return Ok(new { Message = "Registado com sucesso!" });
 
         }
@@ -56,10 +57,12 @@ namespace QueVistoHoje.API.Controllers {
             if (user == null) return Unauthorized(new { Message = "Credenciais inválidas!" });
 
             var result = await signInManager.CheckPasswordSignInAsync(user, model.Password, false);
-
             if (!result.Succeeded) return Unauthorized(new { Message = "Credenciais inválidas!" });
 
             var token = GenerateJwtToken(user);
+
+            var roles = await userManager.GetRolesAsync(user);
+            Console.WriteLine(string.Join(", ", roles));  // Should output "admin"
 
             return Ok(new {
                 Token = token,
@@ -86,53 +89,38 @@ namespace QueVistoHoje.API.Controllers {
             });
         }
 
-        private string GenerateJwtToken(IdentityUser user) {
-            var tokenHandler = new JwtSecurityTokenHandler();
+        private string GenerateJwtToken(ApplicationUser user) {
+            // Use a 256-bit key for HS256
+            var key = Encoding.UTF8.GetBytes(configuration["JWT:Key"]);
 
-            // Get JWT settings from configuration and convert the key to bytes
-            var key = GenerateRandomKey(32);  // Example length (256-bit key)
-
-            // Ensure the key is at least 128 bits (16 bytes)
-            if (key.Length < 16) {
-                throw new ArgumentException("The key for JWT is too short. It must be at least 128 bits (16 bytes).");
+            if (key.Length < 32) {
+                throw new Exception("JWT key must be at least 256 bits (32 bytes).");
             }
 
-            var tokenDescriptor = new SecurityTokenDescriptor {
-                // Subject holds the claims about the user
-                Subject = new ClaimsIdentity(new[] {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim(ClaimTypes.NameIdentifier, user.Id)
-        }),
+            var creds = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256);
 
-                // Expiry time of the token
-                Expires = DateTime.UtcNow.AddHours(1),
+            var claims = new List<Claim>
+            {
+        new Claim(ClaimTypes.Name, user.UserName),
+        new Claim(ClaimTypes.NameIdentifier, user.Id)
+    };
 
-                // Additional claims like issuer and audience
-                Issuer = configuration["JWT:Issuer"],    // Optional but good for added security
-                Audience = configuration["JWT:Audience"],
-
-                // Signing credentials
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
-            };
-
-            // Generate the token
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-
-            // Convert the token to a string representation
-            return tokenHandler.WriteToken(token);
-        }
-
-
-        private byte[] GenerateRandomKey(int lengthInBytes) {
-            var randomBytes = new byte[lengthInBytes];
-
-            // Use RandomNumberGenerator to fill the byte array with secure random values
-            using (var rng = RandomNumberGenerator.Create()) {
-                rng.GetBytes(randomBytes); // Generate secure random bytes
+            var roles = userManager.GetRolesAsync(user).Result;
+            foreach (var role in roles) {
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-            return randomBytes;
+            var expiration = DateTime.UtcNow.AddHours(1); // Token expires in 1 hour
+
+            var token = new JwtSecurityToken(
+                issuer: configuration["JWT:Issuer"],
+                audience: configuration["JWT:Audience"],
+                claims: claims,
+                expires: expiration,
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
     }
