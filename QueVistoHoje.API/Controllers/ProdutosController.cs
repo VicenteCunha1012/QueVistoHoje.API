@@ -12,7 +12,7 @@ namespace QueVistoHoje.API.Controllers {
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
+        //[Authorize(Roles = "admin")]
         public async Task<IActionResult> GetProdutos() {
             foreach (var header in Request.Headers) {
                 Console.WriteLine($"{header.Key}: {header.Value}");
