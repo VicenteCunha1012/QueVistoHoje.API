@@ -81,6 +81,14 @@ builder.Services.AddSwaggerGen(c => {
         });
 });
 
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(builder => {
+        builder.AllowAnyOrigin() // Or restrict it to the tunnel's domain
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 // JSON Serialization Configuration
 builder.Services.AddControllers()
     .AddJsonOptions(options => {
@@ -129,6 +137,7 @@ if (app.Environment.IsDevelopment()) {
     });
 }
 
+app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
