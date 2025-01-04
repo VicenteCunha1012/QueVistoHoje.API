@@ -36,6 +36,9 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "API": {
+      "applicationUrl": "http://*:5000;https://*:5001"
     }
   }
 }
