@@ -71,11 +71,14 @@ namespace QueVistoHoje.API.Controllers {
             }
         }
 
-        // POST /api/encomendas/
+        //POST /api/encomenda?token=your_token_here
         [HttpPost("api/encomenda")]
-        [Authorize(Roles="Admin")]
-        public async Task<IActionResult> CriarEncomenda([FromBody] Encomenda encomenda) {
+        public async Task<IActionResult> CriarEncomenda([FromQuery] string tokenRequest, [FromBody] Encomenda encomenda) {
             try {
+                if (string.IsNullOrEmpty(tokenRequest)) {
+                    return Unauthorized(new { Message = "Token é obrigatório." });
+                }
+
                 if (encomenda == null) {
                     return BadRequest(new { Message = "A encomenda não pode ser nula." });
                 }
@@ -83,6 +86,8 @@ namespace QueVistoHoje.API.Controllers {
                 if (string.IsNullOrEmpty(encomenda.EnderecoEntrega)) {
                     return BadRequest(new { Message = "O endereço de entrega é obrigatório." });
                 }
+
+                // Optionally, you can validate the token here if needed
 
                 var createdEncomenda = await IRepository.CriarEncomendaAsync(encomenda);
 
@@ -96,6 +101,8 @@ namespace QueVistoHoje.API.Controllers {
                 return StatusCode(500, new { Message = "Erro ao criar a encomenda.", Detalhes = ex.Message });
             }
         }
+
+
 
     }
 
