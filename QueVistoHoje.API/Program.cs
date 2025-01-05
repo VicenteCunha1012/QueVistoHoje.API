@@ -15,37 +15,37 @@ using Newtonsoft.Json;
 var builder = WebApplication.CreateBuilder(args);
 
 // JWT Authentication Configuration
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => {
-        options.TokenValidationParameters = new TokenValidationParameters {
-            ValidAudience = builder.Configuration["JWT:Audience"],
-            ValidIssuer = builder.Configuration["JWT:Issuer"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            // Configure the role claim type to match the one in your token
-            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-        };
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options => {
+//        options.TokenValidationParameters = new TokenValidationParameters {
+//            ValidAudience = builder.Configuration["JWT:Audience"],
+//            ValidIssuer = builder.Configuration["JWT:Issuer"],
+//            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])),
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateLifetime = true,
+//            ValidateIssuerSigningKey = true,
+//            // Configure the role claim type to match the one in your token
+//            RoleClaimType = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+//        };
 
-        // Logging events
-        options.Events = new JwtBearerEvents {
-            OnAuthenticationFailed = context => {
-                Console.WriteLine("Authentication failed: " + context.Exception.Message);
-                return Task.CompletedTask;
-            },
-            OnTokenValidated = context => {
-                Console.WriteLine("Token validated successfully.");
-                return Task.CompletedTask;
-            },
-            OnChallenge = context => {
-                // Log the challenge event to understand why access is denied
-                Console.WriteLine("Authorization failed. Reason: " + context.Error);
-                return Task.CompletedTask;
-            }
-        };
-    });
+//        // Logging events
+//        options.Events = new JwtBearerEvents {
+//            OnAuthenticationFailed = context => {
+//                Console.WriteLine("Authentication failed: " + context.Exception.Message);
+//                return Task.CompletedTask;
+//            },
+//            OnTokenValidated = context => {
+//                Console.WriteLine("Token validated successfully.");
+//                return Task.CompletedTask;
+//            },
+//            OnChallenge = context => {
+//                // Log the challenge event to understand why access is denied
+//                Console.WriteLine("Authorization failed. Reason: " + context.Error);
+//                return Task.CompletedTask;
+//            }
+//        };
+//    });
 
 // Logging Configuration
 builder.Services.AddLogging(logging => {
@@ -112,12 +112,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 
-// Role Seeding
-using (var scope = builder.Services.BuildServiceProvider().CreateScope()) {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    await ApplicationDbContextSeed.SeedRolesAsync(roleManager);
-}
-
 // Repository Configuration
 builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
@@ -140,7 +134,6 @@ if (app.Environment.IsDevelopment()) {
 app.UseCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
-app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

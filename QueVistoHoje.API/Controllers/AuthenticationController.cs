@@ -44,7 +44,6 @@ namespace QueVistoHoje.API.Controllers {
                 return BadRequest(result.Errors);
             }
 
-            await userManager.AddToRoleAsync(user, "admin");
             return Ok(new { Message = "Registado com sucesso!" });
 
         }
@@ -85,9 +84,6 @@ namespace QueVistoHoje.API.Controllers {
             }
 
             var token = GenerateJwtToken(user);
-
-            var roles = await userManager.GetRolesAsync(user);
-            Console.WriteLine(string.Join(", ", roles)); // Should output roles such as "admin"
 
             return Ok(new {
                 Token = token,
